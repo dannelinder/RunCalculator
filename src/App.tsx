@@ -225,41 +225,41 @@ function App() {
         <h2>1. Calculate Pace</h2>
         <form id="calc-pace-form" onSubmit={e => e.preventDefault()}>
           <label htmlFor="distance-pace">Distance ({unit})</label>
-          <input id="distance-pace" type="text" min="0" step="0.1" value={distancePace} onChange={e => setDistancePace(handleDistanceInput(e))} pattern={unit === 'km' ? "[0-9]+([,][0-9]+)?" : "[0-9]+([.][0-9]+)?"} placeholder={unit === 'km' ? 'e.g. 5,0' : 'e.g. 3.1'} />
+          <input aria-label={`Distance (${unit}) for pace`} id="distance-pace" type="text" min="0" step="0.1" value={distancePace} onChange={e => setDistancePace(handleDistanceInput(e))} pattern={unit === 'km' ? "[0-9]+([,][0-9]+)?" : "[0-9]+([.][0-9]+)?"} placeholder={unit === 'km' ? 'e.g. 5,0' : 'e.g. 3.1'} />
           <label htmlFor="time-pace">Time</label>
-          <input id="time-pace" type="text" value={timePace} onChange={e => setTimePace(e.target.value)} placeholder="hh:mm:ss" />
+          <input aria-label="Time for pace (hh:mm:ss)" id="time-pace" type="text" value={timePace} onChange={e => setTimePace(e.target.value)} placeholder="hh:mm:ss" />
           <button id="btn-calc-pace" type="button" onClick={handlePaceCalc}>Calculate Pace</button>
-          {paceResult && <div className="result">Pace: {paceResult}</div>}
+          {paceResult && <div className="result" aria-live="polite">Pace: {paceResult}</div>}
         </form>
         <h2>2. Calculate Time</h2>
         <form id="calc-time-form">
           <label htmlFor="distance-time">Distance ({unit})</label>
-          <input id="distance-time" type="text" min="0" step="0.1" value={distanceTime} onChange={e => setDistanceTime(handleDistanceInput(e))} pattern={unit === 'km' ? "[0-9]+([,][0-9]+)?" : "[0-9]+([.][0-9]+)?"} placeholder={unit === 'km' ? 'e.g. 10,0' : 'e.g. 6.2'} />
+          <input aria-label={`Distance (${unit}) for time`} id="distance-time" type="text" min="0" step="0.1" value={distanceTime} onChange={e => setDistanceTime(handleDistanceInput(e))} pattern={unit === 'km' ? "[0-9]+([,][0-9]+)?" : "[0-9]+([.][0-9]+)?"} placeholder={unit === 'km' ? 'e.g. 10,0' : 'e.g. 6.2'} />
           <label htmlFor="pace-time">Pace (mm:ss)</label>
-          <input id="pace-time" type="text" placeholder="mm:ss" value={paceTime} onChange={e => setPaceTime(e.target.value)} />
+          <input aria-label="Pace for time (mm:ss)" id="pace-time" type="text" placeholder="mm:ss" value={paceTime} onChange={e => setPaceTime(e.target.value)} />
           <button id="btn-calc-time" type="button" onClick={handleTimeCalc}>Calculate Time</button>
-          {timeResult && <div className="result">Time: {timeResult}</div>}
+          {timeResult && <div className="result" aria-live="polite">Time: {timeResult}</div>}
         </form>
         <h2>3. Calculate Distance</h2>
         <form id="calc-distance-form">
           <label htmlFor="time-distance">Time (hh:mm:ss)</label>
-          <input id="time-distance" type="text" placeholder="hh:mm:ss" value={timeDistance} onChange={e => setTimeDistance(e.target.value)} />
+          <input aria-label="Time for distance (hh:mm:ss)" id="time-distance" type="text" placeholder="hh:mm:ss" value={timeDistance} onChange={e => setTimeDistance(e.target.value)} />
           <label htmlFor="pace-distance">Pace (mm:ss)</label>
-          <input id="pace-distance" type="text" placeholder="mm:ss" value={paceDistance} onChange={e => setPaceDistance(e.target.value)} />
+          <input aria-label="Pace for distance (mm:ss)" id="pace-distance" type="text" placeholder="mm:ss" value={paceDistance} onChange={e => setPaceDistance(e.target.value)} />
           <button id="btn-calc-distance" type="button" onClick={handleDistanceCalc}>Calculate Distance</button>
-          {distanceResult && <div className="result">Distance: {distanceResult}</div>}
+          {distanceResult && <div className="result" aria-live="polite">Distance: {distanceResult}</div>}
         </form>
         <h2>4. Convert min/{unit} to {unit}/h</h2>
         <form id="convert-minkm-kmh-form">
           <label htmlFor="minkm">min/{unit}</label>
-          <input id="minkm" type="text" placeholder="mm:ss" value={minkm} onChange={e => setMinkm(e.target.value)} />
+          <input aria-label={`min/${unit} (mm:ss)`} id="minkm" type="text" placeholder="mm:ss" value={minkm} onChange={e => setMinkm(e.target.value)} />
           <button id="btn-convert-minkm-kmh" type="button" onClick={handleConvertMinKmToKmh}>Convert to {unit}/h</button>
-          {kmhResult && <div className="result">{kmhResult}</div>}
+          {kmhResult && <div className="result" aria-live="polite">{kmhResult}</div>}
         </form>
         <h2>5. Convert {unit}/h to min/{unit}</h2>
         <form id="convert-kmh-minkm-form">
           <label htmlFor="kmh">{unit}/h</label>
-          <input id="kmh" type="text" min="0" step="0.01" value={unit === 'km' ? kmh : mileh} onChange={e => unit === 'km' ? setKmh(handleDistanceInput(e)) : setMileh(handleDistanceInput(e))} placeholder={unit === 'km' ? 'e.g. 12,5' : 'e.g. 7.8'} />
+          <input aria-label={`${unit}/h`} id="kmh" type="text" min="0" step="0.01" value={unit === 'km' ? kmh : mileh} onChange={e => unit === 'km' ? setKmh(handleDistanceInput(e)) : setMileh(handleDistanceInput(e))} placeholder={unit === 'km' ? 'e.g. 12,5' : 'e.g. 7.8'} />
           <button id="btn-convert-kmh-minkm" type="button" onClick={() => {
             const val = unit === 'km' ? kmh : mileh;
             const speed = parseFloat(val.replace(',', '.'));
@@ -273,8 +273,8 @@ function App() {
               setMinkmResult('');
             }
           }}>Convert to min/{unit}</button>
-          {minkmResult && <div className="result">{minkmResult}</div>}
-        {forbiddenCharMsg && <div className="error-msg">{forbiddenCharMsg}</div>}
+          {minkmResult && <div className="result" aria-live="polite">{minkmResult}</div>}
+        {forbiddenCharMsg && <div className="error-msg" role="alert" aria-live="polite">{forbiddenCharMsg}</div>}
         </form>
 
         {/* 6. Race Predictor */}
@@ -285,7 +285,7 @@ function App() {
               <label htmlFor="race-from">Distance</label>
             </div>
             <div>
-              <select id="race-from" value={raceFrom} onChange={e => setRaceFrom(e.target.value as '5K' | '10K' | 'Half Marathon' | 'Marathon')}>
+              <select aria-label="Race distance" id="race-from" value={raceFrom} onChange={e => setRaceFrom(e.target.value as '5K' | '10K' | 'Half Marathon' | 'Marathon')}>
                 {unit === 'km' ? (
                   <>
                     <option value="5K">5 km</option>
@@ -307,7 +307,7 @@ function App() {
               <label htmlFor="race-from-time">Time</label>
             </div>
             <div>
-              <input id="race-from-time" type="text" placeholder="hh:mm:ss" value={raceFromTime} onChange={e => setRaceFromTime(e.target.value)} />
+              <input aria-label="Race time (hh:mm:ss)" id="race-from-time" type="text" placeholder="hh:mm:ss" value={raceFromTime} onChange={e => setRaceFromTime(e.target.value)} />
             </div>
             <div>
               <label htmlFor="effort-factor">Effort factor (Riegel k)</label>
@@ -344,7 +344,7 @@ function App() {
             const t1 = parseTimeToSecondsFlexible(raceFromTime);
             if (!fromDistance || !t1) return null;
             return (
-              <div className="result" style={{ marginTop: '1rem' }}>
+              <div className="result" aria-live="polite" style={{ marginTop: '1rem' }}>
                 <span>Predicted times:</span>
                 <ul style={{ marginTop: '0.5rem' }}>
                   {Object.entries(raceDistances).map(([label, dist]) => {
