@@ -1,3 +1,35 @@
+/* Ensure Race Predictor inputs match other field sizes */
+#race-predictor-fields select,
+#race-predictor-fields input[type="text"] {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Match dropdown height/padding to other inputs */
+#race-predictor-fields select {
+  padding: 0.5rem 0.7rem;
+  height: 2.5rem;
+  font-size: 1rem;
+  font-family: inherit;
+  line-height: 1.2;
+  text-align: left;
+  text-indent: 0;
+  padding-left: 0.5rem;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  text-align-last: left; /* ensures selected value is left-aligned */
+  background-image: none; /* remove default arrow to avoid extra padding */
+}
+
+/* Ensure predicted times text is black */
+.calc-section .result {
+  color: #000;
+}
+/* Predicted times list items should not be bold */
+.calc-section .result li {
+  font-weight: 400;
+}
 .unit-toggle .unit-btn {
   position: relative;
   display: inline-block;

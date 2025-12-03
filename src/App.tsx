@@ -2,6 +2,51 @@ import './App.css'
 import { useState } from 'react'
 
 function App() {
+          // Race Predictor state
+          const [raceFrom, setRaceFrom] = useState('10K');
+          const [raceFromCustom, setRaceFromCustom] = useState('');
+          const [raceFromTime, setRaceFromTime] = useState('');
+          const [raceTo, setRaceTo] = useState('Marathon');
+          const [raceToCustom, setRaceToCustom] = useState('');
+          const [racePredicted, setRacePredicted] = useState('');
+    const [effortFactor, setEffortFactor] = useState(1.06);
+
+          const raceDistances = {
+            '5K': 5,
+            '10K': 10,
+            'Half Marathon': 21.0975,
+            'Marathon': 42.195,
+            'Custom': null
+          };
+
+          function parseTimeToSecondsFlexible(timeStr) {
+            const parts = timeStr.split(':').map(Number);
+            if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2];
+            if (parts.length === 2) return parts[0] * 60 + parts[1];
+            if (parts.length === 1) return parts[0];
+            return 0;
+          }
+
+          function formatSecondsToHHMMSSFlexible(seconds) {
+            const h = Math.floor(seconds / 3600);
+            const m = Math.floor((seconds % 3600) / 60);
+            const s = Math.round(seconds % 60);
+            if (h > 0) return `${h}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+            return `${m}:${s.toString().padStart(2, '0')}`;
+          }
+
+          function handleRacePredict(e) {
+            e.preventDefault();
+            let d1 = raceFrom === 'Custom' ? parseFloat(raceFromCustom.replace(',', '.')) : raceDistances[raceFrom];
+            let d2 = raceTo === 'Custom' ? parseFloat(raceToCustom.replace(',', '.')) : raceDistances[raceTo];
+            const t1 = parseTimeToSecondsFlexible(raceFromTime);
+            if (!d1 || !d2 || !t1) {
+              setRacePredicted('');
+              return;
+            }
+            const t2 = t1 * Math.pow(d2 / d1, 1.06);
+            setRacePredicted(formatSecondsToHHMMSSFlexible(t2));
+          }
         // Show forbidden character message
         const [forbiddenCharMsg, setForbiddenCharMsg] = useState('');
 
@@ -45,32 +90,10 @@ function App() {
       const parts = paceStr.split(':').map(Number)
       if (parts.length === 2) {
         return parts[0] * 60 + parts[1]
+      } else if (parts.length === 1) {
+        return parts[0]
       }
       return 0
-    }
-
-    // Helper to format seconds to hh:mm:ss
-    function formatSecondsToHHMMSS(seconds: number) {
-      const h = Math.floor(seconds / 3600)
-      const m = Math.floor((seconds % 3600) / 60)
-      const s = Math.round(seconds % 60)
-      return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`
-    }
-
-    function handleTimeCalc() {
-      const distance = parseDistanceInput(distanceTime)
-      const paceStr = paceTime
-      if (!distance || !paceStr) {
-        setTimeResult('')
-        return
-      }
-      const paceSec = parsePaceToSeconds(paceStr)
-      if (paceSec === 0) {
-        setTimeResult('')
-        return
-      }
-      const totalSec = paceSec * distance
-      setTimeResult(formatSecondsToHHMMSS(totalSec))
     }
 
     function handleDistanceCalc() {
@@ -205,6 +228,22 @@ function App() {
     setPaceResult(formatSecondsToMMSS(paceSec) + ` min/${unit}`)
   }
 
+  function handleTimeCalc() {
+    const distance = parseDistanceInput(distanceTime)
+    const paceStr = paceTime
+    if (!distance || !paceStr) {
+      setTimeResult('')
+      return
+    }
+    const paceSec = parsePaceToSeconds(paceStr)
+    if (paceSec === 0) {
+      setTimeResult('')
+      return
+    }
+    const totalSec = distance * paceSec
+    setTimeResult(formatSecondsToHHMMSSFlexible(totalSec))
+  }
+
   return (
     <>
       <h1 id="header-title">Run Calculator</h1>
@@ -243,23 +282,23 @@ function App() {
           <label htmlFor="distance-time">Distance ({unit})</label>
           <input id="distance-time" type="text" min="0" step="0.1" value={distanceTime} onChange={e => setDistanceTime(handleDistanceInput(e))} pattern={unit === 'km' ? "[0-9]+([,][0-9]+)?" : "[0-9]+([.][0-9]+)?"} placeholder={unit === 'km' ? 'e.g. 10,0' : 'e.g. 6.2'} />
           <label htmlFor="pace-time">Pace (mm:ss)</label>
-          <input id="pace-time" type="text" placeholder="mm:ss" value={paceTime} onChange={e => setPaceTime(e.target.value)} placeholder="mm:ss" />
+          <input id="pace-time" type="text" placeholder="mm:ss" value={paceTime} onChange={e => setPaceTime(e.target.value)} />
           <button id="btn-calc-time" type="button" onClick={handleTimeCalc}>Calculate Time</button>
           {timeResult && <div className="result">Time: {timeResult}</div>}
         </form>
         <h2>3. Calculate Distance</h2>
         <form id="calc-distance-form">
           <label htmlFor="time-distance">Time (hh:mm:ss)</label>
-          <input id="time-distance" type="text" placeholder="hh:mm:ss" value={timeDistance} onChange={e => setTimeDistance(e.target.value)} placeholder="hh:mm:ss" />
+          <input id="time-distance" type="text" placeholder="hh:mm:ss" value={timeDistance} onChange={e => setTimeDistance(e.target.value)} />
           <label htmlFor="pace-distance">Pace (mm:ss)</label>
-          <input id="pace-distance" type="text" placeholder="mm:ss" value={paceDistance} onChange={e => setPaceDistance(e.target.value)} placeholder="mm:ss" />
+          <input id="pace-distance" type="text" placeholder="mm:ss" value={paceDistance} onChange={e => setPaceDistance(e.target.value)} />
           <button id="btn-calc-distance" type="button" onClick={handleDistanceCalc}>Calculate Distance</button>
           {distanceResult && <div className="result">Distance: {distanceResult}</div>}
         </form>
         <h2>4. Convert min/{unit} to {unit}/h</h2>
         <form id="convert-minkm-kmh-form">
           <label htmlFor="minkm">min/{unit}</label>
-          <input id="minkm" type="text" placeholder="mm:ss" value={minkm} onChange={e => setMinkm(e.target.value)} placeholder={`mm:ss`} />
+          <input id="minkm" type="text" placeholder="mm:ss" value={minkm} onChange={e => setMinkm(e.target.value)} />
           <button id="btn-convert-minkm-kmh" type="button" onClick={handleConvertMinKmToKmh}>Convert to {unit}/h</button>
           {kmhResult && <div className="result">{kmhResult}</div>}
         </form>
@@ -283,10 +322,99 @@ function App() {
           {minkmResult && <div className="result">{minkmResult}</div>}
         {forbiddenCharMsg && <div className="error-msg">{forbiddenCharMsg}</div>}
         </form>
+
+        {/* 6. Race Predictor */}
+        <div className="calc-section">
+          <h2>6. Race Predictor</h2>
+          <div id="race-predictor-fields">
+            <div>
+              <label htmlFor="race-from">Distance</label>
+            </div>
+            <div>
+              <select id="race-from" value={raceFrom} onChange={e => setRaceFrom(e.target.value)}>
+                {unit === 'km' ? (
+                  <>
+                    <option value="5K">5 km</option>
+                    <option value="10K">10 km</option>
+                    <option value="Half Marathon">Half marathon</option>
+                    <option value="Marathon">Marathon</option>
+                  </>
+                ) : (
+                  <>
+                    <option value="5K">5 miles</option>
+                    <option value="10K">10 miles</option>
+                    <option value="Half Marathon">Half marathon</option>
+                    <option value="Marathon">Marathon</option>
+                  </>
+                )}
+              </select>
+            </div>
+            <div>
+              <label htmlFor="race-from-time">Time</label>
+            </div>
+            <div>
+              <input id="race-from-time" type="text" placeholder="hh:mm:ss" value={raceFromTime} onChange={e => setRaceFromTime(e.target.value)} />
+            </div>
+            <div>
+              <label htmlFor="effort-factor">Effort factor (Riegel k)</label>
+            </div>
+            <div>
+              <input
+                id="effort-factor"
+                type="range"
+                min={1.02}
+                max={1.10}
+                step={0.01}
+                value={effortFactor}
+                onChange={e => setEffortFactor(parseFloat(e.target.value))}
+              />
+              <div style={{ marginTop: '0.25rem' }}>k = {effortFactor.toFixed(2)}</div>
+            </div>
+          </div>
+          {(() => {
+            const isKm = unit === 'km';
+            const raceDistances = isKm
+              ? {
+                  '5K': 5,
+                  '10K': 10,
+                  'Half Marathon': 21.0975,
+                  'Marathon': 42.195
+                }
+              : {
+                  '5K': 5,
+                  '10K': 10,
+                  'Half Marathon': 13.1094,
+                  'Marathon': 26.2188
+                };
+            const fromDistance = raceDistances[raceFrom];
+            const t1 = parseTimeToSecondsFlexible(raceFromTime);
+            if (!fromDistance || !t1) return null;
+            return (
+              <div className="result" style={{ marginTop: '1rem' }}>
+                <span>Predicted times:</span>
+                <ul style={{ marginTop: '0.5rem' }}>
+                  {Object.entries(raceDistances).map(([label, dist]) => {
+                    const t2 = t1 * Math.pow(dist / fromDistance, effortFactor);
+                    const displayLabel = isKm
+                      ? label.replace('K', ' km')
+                      : label === '5K'
+                        ? '5 miles'
+                        : label === '10K'
+                          ? '10 miles'
+                          : label;
+                    return (
+                      <li key={label}>{displayLabel}: {formatSecondsToHHMMSSFlexible(t2)}</li>
+                    );
+                  })}
+                </ul>
+              </div>
+            );
+          })()}
         </div>
         </div>
       </div>
-    </>
+      </div>
+      </>
   )
 }
 
