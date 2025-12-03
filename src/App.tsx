@@ -3,23 +3,11 @@ import { useState } from 'react'
 
 function App() {
           // Race Predictor state
-          const [raceFrom, setRaceFrom] = useState('10K');
-          const [raceFromCustom, setRaceFromCustom] = useState('');
+          const [raceFrom, setRaceFrom] = useState<'5K' | '10K' | 'Half Marathon' | 'Marathon'>('10K');
           const [raceFromTime, setRaceFromTime] = useState('');
-          const [raceTo, setRaceTo] = useState('Marathon');
-          const [raceToCustom, setRaceToCustom] = useState('');
-          const [racePredicted, setRacePredicted] = useState('');
     const [effortFactor, setEffortFactor] = useState(1.06);
 
-          const raceDistances = {
-            '5K': 5,
-            '10K': 10,
-            'Half Marathon': 21.0975,
-            'Marathon': 42.195,
-            'Custom': null
-          };
-
-          function parseTimeToSecondsFlexible(timeStr) {
+          function parseTimeToSecondsFlexible(timeStr: string) {
             const parts = timeStr.split(':').map(Number);
             if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2];
             if (parts.length === 2) return parts[0] * 60 + parts[1];
@@ -27,7 +15,7 @@ function App() {
             return 0;
           }
 
-          function formatSecondsToHHMMSSFlexible(seconds) {
+          function formatSecondsToHHMMSSFlexible(seconds: number) {
             const h = Math.floor(seconds / 3600);
             const m = Math.floor((seconds % 3600) / 60);
             const s = Math.round(seconds % 60);
@@ -35,18 +23,7 @@ function App() {
             return `${m}:${s.toString().padStart(2, '0')}`;
           }
 
-          function handleRacePredict(e) {
-            e.preventDefault();
-            let d1 = raceFrom === 'Custom' ? parseFloat(raceFromCustom.replace(',', '.')) : raceDistances[raceFrom];
-            let d2 = raceTo === 'Custom' ? parseFloat(raceToCustom.replace(',', '.')) : raceDistances[raceTo];
-            const t1 = parseTimeToSecondsFlexible(raceFromTime);
-            if (!d1 || !d2 || !t1) {
-              setRacePredicted('');
-              return;
-            }
-            const t2 = t1 * Math.pow(d2 / d1, 1.06);
-            setRacePredicted(formatSecondsToHHMMSSFlexible(t2));
-          }
+          // handleRacePredict removed; inline predictor renders directly
         // Show forbidden character message
         const [forbiddenCharMsg, setForbiddenCharMsg] = useState('');
 
@@ -127,27 +104,7 @@ function App() {
   const [mileh, setMileh] = useState('')
 
   // Clear all fields and results, and reset distance fields to default
-  function clearFieldsAndResults() {
-    [
-      'distance-pace', 'distance-time'
-    ].forEach(id => {
-      const el = document.getElementById(id) as HTMLInputElement | null
-      if (el) el.value = formatDistance(defaultDistance)
-    })
-    ;[
-      'time-pace', 'pace-time',
-      'time-distance', 'pace-distance',
-      'minkm', 'kmh'
-    ].forEach(id => {
-      const el = document.getElementById(id) as HTMLInputElement | null
-      if (el) el.value = ''
-    })
-    setPaceResult('')
-    setTimeResult('')
-    setDistanceResult('')
-    setKmhResult('')
-    setMinkmResult('')
-  }
+  // clearFieldsAndResults removed (unused)
 
   // Update distance and other fields when unit changes
   function handleUnitChange(newUnit: string) {
@@ -200,10 +157,7 @@ function App() {
     return `${min}:${sec.toString().padStart(2, '0')}`
   }
 
-  // Helper to format distance with correct separator
-  function formatDistance(val: number) {
-    return unit === 'km' ? val.toFixed(1).replace('.', ',') : val.toFixed(1)
-  }
+  // Helper to format distance with correct separator (unused)
   // Helper to parse input value to float
   function parseDistanceInput(val: string) {
     if (unit === 'km') {
@@ -331,7 +285,7 @@ function App() {
               <label htmlFor="race-from">Distance</label>
             </div>
             <div>
-              <select id="race-from" value={raceFrom} onChange={e => setRaceFrom(e.target.value)}>
+              <select id="race-from" value={raceFrom} onChange={e => setRaceFrom(e.target.value as '5K' | '10K' | 'Half Marathon' | 'Marathon')}>
                 {unit === 'km' ? (
                   <>
                     <option value="5K">5 km</option>

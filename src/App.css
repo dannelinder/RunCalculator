@@ -113,23 +113,12 @@ body, .app-container {
   box-shadow: 0 4px 16px rgba(0,0,0,0.12);
 }
 .unit-toggle input[type="radio"] {
-  color: #ff9800;
-  font-weight: 700;
-.unit-toggle input[type="radio"]:checked + label {
-  opacity: 1;
-  border: 2px solid #ff5e13;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
-  filter: brightness(1.08);
-}
-}
-.unit-toggle input[type="radio"] {
   display: none;
 }
 .unit-toggle input[type="radio"]:checked + label {
   background: linear-gradient(90deg, #ff9800 0%, #ff5e13 100%);
   color: #fff;
   border-color: #ff9800;
-}
 }
 .unit-toggle label {
   font-size: 1.1rem;
@@ -138,9 +127,6 @@ body, .app-container {
 
 .calc-section h2 {
   color: #000;
-  label {
-    color: #000;
-  }
   margin-top: 2rem;
   font-size: 1.2rem;
 }
@@ -198,5 +184,4 @@ button:hover, button:focus {
     gap: 0.3rem;
   }
 }
-  color: #888;
-}
+
